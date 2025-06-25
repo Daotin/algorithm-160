@@ -39,9 +39,9 @@
  */
 var isValid = function (s) {
   const bracketMap = {
-    ")": "(",
-    "]": "[",
-    "}": "{",
+    ')': '(',
+    ']': '[',
+    '}': '{',
   };
 
   const stack = [];
@@ -127,10 +127,7 @@ MinStack.prototype.push = function (val) {
   this.stack.push(val);
   // 注意这里使用了 <= 而不是 <，这是为了处理重复的最小值。如果只是 <，当遇到与当前最小值相同的元素时，minStack 不会推入，但在 pop 掉当前最小值后，就没有对应的次小值来维护 minStack 了。
   // 比如 [2, 0, 0, -3],使用 <= 可以在遇到相同最小值时也将其推入 minStack，这样在 pop 掉一个最小值时，如果后面还有相同的最小值，minStack 仍然能正确地保留。
-  if (
-    this.minStack.length === 0 ||
-    val <= this.minStack[this.minStack.length - 1]
-  ) {
+  if (this.minStack.length === 0 || val <= this.minStack[this.minStack.length - 1]) {
     this.minStack.push(val);
   }
 };
@@ -182,22 +179,22 @@ var evalRPN = function (tokens) {
       let num1 = stack.pop();
 
       switch (token) {
-        case "+":
+        case '+':
           stack.push(num1 + num2);
           break;
-        case "-":
+        case '-':
           stack.push(num1 - num2);
           break;
-        case "*":
+        case '*':
           stack.push(num1 * num2);
           break;
-        case "/":
+        case '/':
           // 两个整数之间的除法总是 向零截断
           stack.push(num2 == 0 ? 0 : Math.trunc(num1 / num2));
           break;
 
         default:
-          throw new Error("Not correct expression!");
+          throw new Error('Not correct expression!');
       }
     }
   }
@@ -205,7 +202,7 @@ var evalRPN = function (tokens) {
   if (stack.length === 1 && !isNaN(stack[0])) {
     return stack[0];
   } else {
-    throw new Error("Not correct expression!");
+    throw new Error('Not correct expression!');
   }
 };
 
@@ -244,18 +241,18 @@ var evalRPN = function (tokens) {
 6. 最后返回结果列表。
  */
 var generateParenthesis = function (n) {
-  let str = "";
+  let str = '';
   let result = [];
-  function bracket(str = "", left = 0, right = 0) {
+  function bracket(str = '', left = 0, right = 0) {
     if (left > 0) {
-      bracket(str + "(", left - 1, right);
+      bracket(str + '(', left - 1, right);
     }
     if (left < right) {
-      bracket(str + ")", left, right - 1);
+      bracket(str + ')', left, right - 1);
     }
     if (left == 0 && right == 0) {
       result.push(str);
-      str = "";
+      str = '';
     }
   }
   bracket(str, n, n);
@@ -285,10 +282,7 @@ var dailyTemperatures = function (temperatures) {
   const stack = []; // 单调递减栈，存储索引
 
   for (let i = 0; i < temperatures.length; i++) {
-    while (
-      stack.length > 0 &&
-      temperatures[i] > temperatures[stack[stack.length - 1]]
-    ) {
+    while (stack.length > 0 && temperatures[i] > temperatures[stack[stack.length - 1]]) {
       const idx = stack.pop();
       answer[idx] = i - idx;
     }
@@ -356,7 +350,41 @@ var carFleet = function (target, position, speed) {
   return fleets.length;
 };
 
-let target = 12;
-let position = [10, 8, 0, 5, 3];
-let speed = [2, 4, 1, 1, 3];
-console.log(carFleet(target, position, speed));
+// let target = 12;
+// let position = [10, 8, 0, 5, 3];
+// let speed = [2, 4, 1, 1, 3];
+// console.log(carFleet(target, position, speed));
+
+/**
+ * @param {number[]} heights
+ * @return {number}
+84. 柱状图中最大的矩形
+
+给定 n 个非负整数，用来表示柱状图中各个柱子的高度。每个柱子彼此相邻，且宽度为 1 。
+
+求在该柱状图中，能够勾勒出来的矩形的最大面积。
+
+输入：heights = [2,1,5,6,2,3]
+输出：10
+解释：最大的矩形为图中红色区域，面积为 10
+ */
+var largestRectangleArea = function (heights) {
+  let maxArea = 0;
+  let stack = [-1]; // 哨兵，简化边界处理
+  heights.push(0); // 保证最后所有元素出栈
+
+  for (let i = 0; i < heights.length; i++) {
+    // 当遇到比栈顶元素对应柱子矮的柱子时，计算栈顶元素对应的矩形面积
+    while (heights[i] < heights[stack[stack.length - 1]]) {
+      let height = heights[stack.pop()];
+      let width = i - stack[stack.length - 1] - 1;
+      maxArea = Math.max(maxArea, height * width);
+    }
+    stack.push(i); // 当前柱子索引入栈
+  }
+
+  return maxArea;
+};
+
+let heights = [2, 1, 5, 6, 2, 3];
+console.log(largestRectangleArea(heights));
