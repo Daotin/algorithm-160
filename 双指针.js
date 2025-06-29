@@ -58,7 +58,7 @@ var moveZeroes = function (nums) {
 由于空字符串正着反着读都一样，所以是回文串。
  */
 var isPalindrome = function (s) {
-  let str = s.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
+  let str = s.replace(/[^a-zA-Z0-9]/g, "").toLowerCase();
 
   if (str.length == 1) {
     return true;
@@ -78,11 +78,11 @@ var isPalindrome = function (s) {
 function isPalindrome(s) {
   // 步骤1：清理字符串
   // 使用正则表达式匹配所有非字母数字字符，并使用toLowerCase()方法统一为小写
-  let cleanedS = s.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
+  let cleanedS = s.replace(/[^a-zA-Z0-9]/g, "").toLowerCase();
 
   // 步骤2：反转字符串
   // split('')将字符串拆分成字符数组，reverse()反转数组，join('')将数组合并成字符串
-  let reversedS = cleanedS.split('').reverse().join('');
+  let reversedS = cleanedS.split("").reverse().join("");
 
   // 步骤3：比较并返回结果
   return cleanedS === reversedS;
@@ -156,7 +156,130 @@ var twoSum = function (numbers, target) {
   }
 };
 
-console.log(twoSum([2, 7, 11, 15], 9));
-console.log(twoSum([2, 3, 4], 6));
-console.log(twoSum([-1, 0], -1));
-console.log(twoSum([1, 2, 3, 5, 7, 11, 20, 25, 27], 25));
+// console.log(twoSum([2, 7, 11, 15], 9));
+// console.log(twoSum([2, 3, 4], 6));
+// console.log(twoSum([-1, 0], -1));
+// console.log(twoSum([1, 2, 3, 5, 7, 11, 20, 25, 27], 25));
+
+/**
+ * @param {number[]} height
+ * @return {number}
+11. 盛最多水的容器
+给定一个长度为 n 的整数数组 height 。有 n 条垂线，第 i 条线的两个端点是 (i, 0) 和 (i, height[i]) 。
+
+找出其中的两条线，使得它们与 x 轴共同构成的容器可以容纳最多的水。
+
+返回容器可以储存的最大水量。
+
+说明：你不能倾斜容器。
+
+示例1：
+
+输入：[1,8,6,2,5,4,8,3,7]
+输出：49
+
+
+示例2：
+输入：height = [1,1]
+输出：1
+ */
+var maxArea = function (height) {
+  let left = 0;
+  let right = height.length - 1;
+  function getArea(left, right) {
+    return (right - left) * Math.min(height[left], height[right]);
+  }
+
+  let max = getArea(left, right);
+
+  while (left < right) {
+    if (height[left] < height[right]) {
+      left++;
+      max = Math.max(max, getArea(left, right));
+    } else {
+      right--;
+      max = Math.max(max, getArea(left, right));
+    }
+  }
+
+  return max;
+};
+
+// console.log(maxArea([1, 8, 6, 2, 5, 4, 8, 3, 7]));
+// console.log(maxArea([1, 1]));
+
+/**
+ * @param {number[]} nums
+ * @return {number[][]}
+15. 三数之和
+
+给你一个整数数组 nums ，判断是否存在三元组 [nums[i], nums[j], nums[k]] 满足 i != j、i != k 且 j != k ，同时还满足 nums[i] + nums[j] + nums[k] == 0 。请你返回所有和为 0 且不重复的三元组。
+
+注意：答案中不可以包含重复的三元组。
+
+示例 1：
+
+输入：nums = [-1,0,1,2,-1,-4]
+输出：[[-1,-1,2],[-1,0,1]]
+解释：
+nums[0] + nums[1] + nums[2] = (-1) + 0 + 1 = 0 。
+nums[1] + nums[2] + nums[4] = 0 + 1 + (-1) = 0 。
+nums[0] + nums[3] + nums[4] = (-1) + 2 + (-1) = 0 。
+不同的三元组是 [-1,0,1] 和 [-1,-1,2] 。
+注意，输出的顺序和三元组的顺序并不重要。
+ */
+var threeSum = function (nums) {
+  nums.sort((a, b) => a - b);
+  let result = [];
+
+  for (let i = 0; i < nums.length - 2; i++) {
+    if (i > 0 && nums[i] === nums[i - 1]) continue;
+
+    let left = i + 1;
+    let right = nums.length - 1;
+
+    while (left < right) {
+      const sum = nums[i] + nums[left] + nums[right];
+
+      if (sum < 0) {
+        left++;
+      } else if (sum > 0) {
+        right--;
+      } else {
+        result.push([nums[i], nums[left], nums[right]]);
+
+        while (left < right && nums[left] === nums[left + 1]) left++;
+        while (left < right && nums[right] === nums[right - 1]) right--;
+
+        left++;
+        right--;
+      }
+    }
+  }
+
+  // 二维数组去重
+  // 问题：如果是10000个数组的[0,0,0,0,.....]会超出时间限制，因为没有去重
+  // function deduplicateTriplets(arr) {
+  //   const seen = new Set();
+  //   const res = [];
+  //   for (const triplet of arr) {
+  //     // 排序后转字符串
+  //     const key = triplet
+  //       .slice()
+  //       .sort((a, b) => a - b)
+  //       .join(",");
+  //     if (!seen.has(key)) {
+  //       seen.add(key);
+  //       res.push(triplet);
+  //     }
+  //   }
+  //   return res;
+  // }
+
+  // return deduplicateTriplets(result);
+  return result;
+};
+
+console.log(threeSum([-1, 0, 1, 2, -1, -4]));
+console.log(threeSum([0, 1, 1]));
+console.log(threeSum([0, 0, 0]));
