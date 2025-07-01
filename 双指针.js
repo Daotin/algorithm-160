@@ -58,7 +58,7 @@ var moveZeroes = function (nums) {
 由于空字符串正着反着读都一样，所以是回文串。
  */
 var isPalindrome = function (s) {
-  let str = s.replace(/[^a-zA-Z0-9]/g, "").toLowerCase();
+  let str = s.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
 
   if (str.length == 1) {
     return true;
@@ -78,11 +78,11 @@ var isPalindrome = function (s) {
 function isPalindrome(s) {
   // 步骤1：清理字符串
   // 使用正则表达式匹配所有非字母数字字符，并使用toLowerCase()方法统一为小写
-  let cleanedS = s.replace(/[^a-zA-Z0-9]/g, "").toLowerCase();
+  let cleanedS = s.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
 
   // 步骤2：反转字符串
   // split('')将字符串拆分成字符数组，reverse()反转数组，join('')将数组合并成字符串
-  let reversedS = cleanedS.split("").reverse().join("");
+  let reversedS = cleanedS.split('').reverse().join('');
 
   // 步骤3：比较并返回结果
   return cleanedS === reversedS;
@@ -280,6 +280,103 @@ var threeSum = function (nums) {
   return result;
 };
 
-console.log(threeSum([-1, 0, 1, 2, -1, -4]));
-console.log(threeSum([0, 1, 1]));
-console.log(threeSum([0, 0, 0]));
+// console.log(threeSum([-1, 0, 1, 2, -1, -4]));
+// console.log(threeSum([0, 1, 1]));
+// console.log(threeSum([0, 0, 0]));
+
+/**
+ * @param {character[]} chars
+ * @return {number}
+443. 压缩字符串
+
+给你一个字符数组 chars ，请使用下述算法压缩：
+
+从一个空字符串 s 开始。对于 chars 中的每组 连续重复字符 ：
+
+如果这一组长度为 1 ，则将字符追加到 s 中。
+否则，需要向 s 追加字符，后跟这一组的长度。
+压缩后得到的字符串 s 不应该直接返回 ，需要转储到字符数组 chars 中。需要注意的是，如果组长度为 10 或 10 以上，则在 chars 数组中会被拆分为多个字符。
+
+请在 修改完输入数组后 ，返回该数组的新长度。
+
+你必须设计并实现一个只使用常量额外空间的算法来解决此问题。
+
+示例 1：
+输入：chars = ["a","a","b","b","c","c","c"]
+输出：返回 6 ，输入数组的前 6 个字符应该是：["a","2","b","2","c","3"]
+解释："aa" 被 "a2" 替代。"bb" 被 "b2" 替代。"ccc" 被 "c3" 替代。
+
+示例 2：
+输入：chars = ["a","b","b","b","b","b","b","b","b","b","b","b","b"]
+输出：返回 4 ，输入数组的前 4 个字符应该是：["a","b","1","2"]。
+解释：由于字符 "a" 不重复，所以不会被压缩。"bbbbbbbbbbbb" 被 “b12” 替代。
+ */
+var compress = function (chars) {
+  let read = 0;
+  let write = 0;
+  let count = 1;
+
+  while (read < chars.length) {
+    if (chars[read] === chars[read + 1]) {
+      count++;
+      read++;
+    } else {
+      chars[write] = chars[read];
+      write++;
+
+      if (count > 1) {
+        let countStr = count.toString();
+        for (let c of countStr) {
+          chars[write] = c;
+          write++;
+        }
+      }
+
+      count = 1;
+      read++;
+    }
+  }
+
+  return write;
+};
+
+// console.log(compress(['a', 'a', 'a', 'b', 'c', 'c', 'c']));
+// console.log(compress(['a', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'b']));
+// console.log(compress(['a']));
+
+/**
+ * @param {string} s
+ * @return {string}
+151. 反转字符串中的单词
+
+给你一个字符串 s ，请你反转字符串中 单词 的顺序。
+
+单词 是由非空格字符组成的字符串。s 中使用至少一个空格将字符串中的 单词 分隔开。
+
+返回 单词 顺序颠倒且 单词 之间用单个空格连接的结果字符串。
+
+注意：输入字符串 s中可能会存在前导空格、尾随空格或者单词间的多个空格。返回的结果字符串中，单词间应当仅用单个空格分隔，且不包含任何额外的空格。
+
+示例 1：
+输入：s = "the sky is blue"
+输出："blue is sky the"
+
+示例 2：
+输入：s = "  hello world  "
+输出："world hello"
+解释：反转后的字符串中不能存在前导空格和尾随空格。
+
+示例 3：
+输入：s = "a good   example"
+输出："example good a"
+解释：如果两个单词间有多余的空格，反转后的字符串需要将单词间的空格减少到仅有一个。
+ */
+var reverseWords = function (s) {
+  s = s.trim().replace(/\s+/g, ' ');
+  let words = s.split(' ');
+  words = words.reverse();
+  return words.join(' ');
+};
+
+console.log(reverseWords('the sky is blue'));
+console.log(reverseWords('a good   example'));
