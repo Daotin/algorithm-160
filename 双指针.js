@@ -378,5 +378,71 @@ var reverseWords = function (s) {
   return words.join(' ');
 };
 
-console.log(reverseWords('the sky is blue'));
-console.log(reverseWords('a good   example'));
+// console.log(reverseWords('the sky is blue'));
+// console.log(reverseWords('a good   example'));
+
+/**
+ * @param {number[]} height
+ * @return {number}
+42. 接雨水
+
+给定 n 个非负整数表示每个宽度为 1 的柱子的高度图，计算按此排列的柱子，下雨之后能接多少雨水。
+
+示例 1：
+输入：height = [0,1,0,2,1,0,1,3,2,1,2,1]
+输出：6
+解释：上面是由数组 [0,1,0,2,1,0,1,3,2,1,2,1] 表示的高度图，在这种情况下，可以接 6 个单位的雨水（蓝色部分表示雨水）。 
+
+示例 2：
+输入：height = [4,2,0,3,2,5]
+输出：9
+
+解题思路：
+核心原理
+
+1.  **木桶效应**：在任何位置，能装多少水，不取决于最高的墙，而取决于**左右两边最高墙中较矮的那一个**（短板）。
+2.  **逐个计算**：总的雨水量等于**每个位置上方能装的雨水量之和**。
+3.  **公式**：对任意柱子 `i`，其上方积水量为：
+    `min(其左边的最高墙, 其右边的最高墙) - 柱子i的高度`
+
+解题思路
+
+双指针法的目标，就是用一次遍历（O(n) 复杂度）来高效地算出每个位置的积水量。
+
+它的思路是设置 `left` 和 `right` 两个指针，从数组的两端向中间移动。在每一步，它并不需要知道全局的最高墙，而是利用一个巧妙的推断：
+
+- **始终移动并计算“较矮”那一边的指针。**
+
+- **为什么可以这样做？**
+  - 假设左边的柱子 `height[left]` 比右边的 `height[right]` 矮。
+  - 此时，我们处理 `left` 指针。对于 `left` 位置而言，它的右边存在一个至少为 `height[right]` 的“高墙”，所以决定它能装多少水的“短板”**必然**是它左边的最高墙 (`maxLeft`)。
+  - 因此，我们可以安全地使用 `maxLeft` 来计算当前 `left` 位置的积水，而无需关心更右边是否还有更高的墙。
+
+- 对称地，如果右边更矮，就处理 `right` 指针，用 `maxRight` 来计算积水。
+
+通过这种方式，算法在每一步都能确定一个位置的积水量，直到两个指针相遇，所有位置的积水都被计算并累加完毕。
+ */
+var trap = function (height) {
+  let left = 0;
+  let right = height.length - 1;
+  let maxLeft = 0;
+  let maxRight = 0;
+  let total = 0;
+
+  while (left <= right) {
+    if (height[left] <= height[right]) {
+      maxLeft = Math.max(height[left], maxLeft);
+      total += maxLeft - height[left];
+      left++;
+    } else {
+      maxRight = Math.max(height[right], maxRight);
+      total += maxRight - height[right];
+      right--;
+    }
+  }
+
+  return total;
+};
+
+console.log(trap([0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1]));
+console.log(trap([4, 2, 0, 3, 2, 5]));
