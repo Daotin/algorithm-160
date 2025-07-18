@@ -139,5 +139,5 @@ var characterReplacement = function (s, k) {
   return maxLength;
 };
 
-console.log(characterReplacement('ABAB', 3));
-console.log(characterReplacement('AABABBAAAA', 1));
+// console.log(characterReplacement('ABAB', 3));
+// console.log(characterReplacement('AABABBAAAA', 1));
